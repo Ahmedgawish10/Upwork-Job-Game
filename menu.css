@@ -1,0 +1,355 @@
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: arial, sans-serif;
+  font-size: 16px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
+  margin: 0;
+  padding: 0;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0
+}
+li {
+  padding: 10px 0;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
+.wrapper {
+  width: 100%;
+  height: 100vh;
+}
+
+#menu {
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  border: 1px solid black;
+  z-index: 2;
+  text-align: center;
+  background-color: grey;
+}
+#menu.main {
+  /* width: 100%;
+  height: 100vh; */
+  background-image: url('imgs/menu-bg.png');
+  background-size: cover;
+}
+#menu.options {
+  background-image: url('imgs//menu-bg.png');
+  background-size: cover;
+}
+
+
+#progress {
+  height: 12%;
+  margin: auto;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+}
+#percent {
+  color: white;
+  font-weight: bold;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+#progress-bar {
+  width: 200px;
+}
+
+#main {
+  display: none;
+  height: 60%;
+  overflow: auto;
+  margin: auto;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+}
+#main h1 {
+  color: white;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  z-index: 2;
+}
+
+.bluebg {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0);
+  display: block;
+  width: 352px;
+  height: 109px;
+  margin: 0 auto;
+  background-image: url("imgs/blue-bg.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  z-index: 1;
+}
+
+.bluebg-option {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0);
+  width: 481px;
+  height: 140px;
+  margin: 0 auto;
+  margin-top: 10px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  background-image: url("imgs/blue-bg-option.png");
+  z-index: 1;
+}
+
+.options-wood {
+  position: absolute;
+  width: 395px;
+  height: 658px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  background-image: url("imgs/option-bg.png");
+  background-repeat: no-repeat;
+  z-index: 0;
+}
+.form-group {
+  color:#750c04;
+  font-size: 25px;
+  font-family: thiscafefont;
+  margin-bottom: 15px;
+}
+
+select
+{
+  background-color: #3db6da;
+  width: 120px;
+  font-size: 22px;
+  text-align: center;
+  color: white;
+  margin-left: 10px;
+  margin-bottom: 50px;
+  font-family:thiscafefont;
+}
+
+.container {
+  position: absolute;
+  margin-top: 100px;
+  left: 50%;
+  transform: translate(-50%,0);
+  padding: 20px;
+  z-index: 1;
+}
+.instruction-container {
+  position: absolute;
+  width: 390px;
+  height: 400px;
+  margin-top: 120px;
+  left: 50%;
+  transform: translate(-50%,0);
+  padding: 20px;
+  z-index: 1;
+  overflow-y: scroll;
+  font-family: thiscafefont;
+  color:darkslategrey;
+}
+
+.gamename{
+  position: absolute;
+  font-family: thiscafefont;
+  font-size: 25px;
+  left: 50%;
+  transform: translate(-50%,0%);
+}
+
+.optiontitle{
+  position: absolute;
+  font-family: thiscafefont;
+  color: white;
+  margin-top: 40px;
+  left: 50%;
+  transform: translate(-50%,-25%);
+  z-index: 4;
+}
+
+.wood {
+  position: absolute;
+  width: 291px;
+  height: 308px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  z-index: 0;
+  background-image: url("imgs/wood-bg.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+.button {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  left: 50%;
+  top: 70px;
+  transform: translate(-50%, 0);
+  width: 220px;
+  height: 75px;
+  margin: 0 auto;
+  line-height: 70px;
+  background-image: url("imgs/btn-bg.png");
+  border: 1px;
+  color: white;
+  font-weight: bold;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+    1px 1px 0 #000;
+  border-radius: 5px;
+  z-index: 2;
+}
+
+.options{
+  top:150px;
+}
+.instruction{
+  top:220px;
+}
+.button:hover {
+  opacity: 75%;
+}
+
+#options {
+  display: none;
+  line-height: 30px;
+  margin: auto;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+}
+#instruction {
+  display: none;
+  line-height: 30px;
+  margin: auto;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+}
+#options li {
+  padding: 5px 0;
+}
+
+.artwork, .music, .developer {
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
+.artwork {
+  color: #fa8526;
+}
+.music {
+  color: #e6e71f;
+}
+.developer {
+  color: #13eb8a;
+}
+
+.back, .back:hover {
+  margin-top: 450px;
+}
+
+@font-face {
+  font-family: thiscafefont;
+  src: url(fonts/thiscafe.otf);
+}
+/* updated style  */
+#canvas {
+  display: none !important;
+}
+#playButton {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+#playButton.sound {
+  background-image: url("./imgs/soundOn.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  margin: 5px;
+  border-radius: 10px;
+}
+#playButton.nosound {
+  background-image: url("./imgs/soundOff.png");
+  background-size: contain;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  margin: 5px;
+  border-radius: 10px;
+  background-repeat: no-repeat;
+}
+
+
+.options-wood{
+  margin-top: 20px;
+  height: 95vh;
+  background-repeat: no-repeat;
+  background-size: contain;
+  
+}
+/* start media  */
+@media screen and (max-width: 600px) {
+  .bluebg-option{
+    width: 90%;
+    background-repeat: no-repeat;
+    background-size: contain;
+
+
+  }
+
+}
+/* media for sm screens page index */
+@media screen and (max-width: 450px) {
+  .gamename {
+    width: 100%;
+    font-size: 22px !important;
+  }
+  .bluebg-option{
+    margin-top: 65px;
+  }
+  .options-wood{
+    width: 79%;
+        height: 85vh;
+    margin-top: 100px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    
+  }
+  .optiontitle{
+    margin-top: 77px;
+  }
+  .bluebg {
+    width: 300px !important;
+  }
+}
+/* media for xsm screens page index */
+@media screen and (max-width: 300px) {
+  .gamename {
+    width: 100%;
+    font-size: 22px !important;
+  }
+  .bluebg {
+    width: 250px !important;
+  }
+  .wood {
+    width: 90% !important;
+  }
+  .options {
+    top: 140px !important;
+  }
+}

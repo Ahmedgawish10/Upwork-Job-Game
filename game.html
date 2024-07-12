@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Board Game</title>
+    <style>
+      :root {
+        --board-rows: 8;
+        /* Default value */
+        --board-cols: 8;
+        /* Default value */
+        --cell-size: 60px;
+        --piece-size: 50px;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-image: url("imgs/menu-bg.png");
+        margin: 0;
+        font-family: Arial, sans-serif;
+      }
+
+      #gameplay {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #turn-display {
+        margin-top: 100px;
+        font-size: 24px;
+        color: whitesmoke;
+      }
+
+      #board {
+        display: grid;
+        grid-template-columns: repeat(var(--board-cols), var(--cell-size));
+        grid-template-rows: repeat(var(--board-rows), var(--cell-size));
+        gap: 2px;
+        border: none;
+        /* Remove solid border */
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2),
+          /* Adjusted box-shadow for elevation */ 0 1px 3px rgba(0, 0, 0, 0.1),
+          inset 0 2px 4px rgba(255, 255, 255, 0.3),
+          inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+        background-color: #bbb;
+        /* Fallback color */
+        border-radius: 10px;
+      }
+
+      #game-over {
+        display: none;
+        text-align: center;
+        padding-top: 92px;
+        z-index: 1;
+        width: 430px;
+        height: 474px;
+        position: absolute;
+        background-image: url("imgs/gameover-bg.png");
+        background-repeat: no-repeat;
+      }
+
+      #pause {
+        display: none;
+        text-align: center;
+        padding-top: 92px;
+        z-index: 1;
+        width: 430px;
+        height: 474px;
+        position: absolute;
+        background-image: url("imgs/pause-bg.png");
+        background-repeat: no-repeat;
+      }
+
+      #pausetext {
+        position: absolute;
+        font-family: thiscafefont;
+        left: 50%;
+        transform: translate(-50%, 0);
+        text-align: center;
+        padding-top: 30%;
+        color: black;
+        font-size: 30px;
+      }
+
+      #pausebtn {
+        position: relative;
+        margin-bottom: 10px;
+        width: 117px;
+        height: 40px;
+        background-image: url("imgs/btn-bg.png");
+        background-size: contain;
+        font-family: thiscafefont;
+      }
+
+      #instructionbtn {
+        position: relative;
+        margin-bottom: 10px;
+        margin-right: 10px;
+        width: 117px;
+        height: 40px;
+        background-image: url("imgs/btn-bg.png");
+        background-size: contain;
+        background-repeat: no-repeat;
+        font-family: thiscafefont;
+      }
+
+      #instructionbtn:hover {
+        opacity: 0.7;
+      }
+
+      #pausebtn:hover {
+        opacity: 0.7;
+      }
+
+      .pausebtntext {
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%, 50%);
+      }
+
+      #winner {
+        position: absolute;
+        font-family: thiscafefont;
+        left: 50%;
+        transform: translate(-50%, 0);
+        text-align: center;
+        padding-top: 30%;
+        color: forestgreen;
+        font-size: 30px;
+      }
+
+      #topbtns {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        left: 22%;
+      }
+
+      .cell {
+        width: var(--cell-size);
+        height: var(--cell-size);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #fff;
+        /* Ensure the background color is visible */
+        transition: box-shadow 0.3s ease;
+        /* Smooth transition for box-shadow */
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        /* Add a subtle border */
+        position: relative;
+        /* Position relative for pseudo-element */
+        overflow: hidden;
+        /* Hide any overflow */
+      }
+
+      .cell.dragging {
+        background-color: transparent;
+        /* Make the background transparent during drag */
+      }
+
+      .cell:not([style*="background-color: #fff"]) {
+        /* Apply special effect to non-white cells */
+        overflow: hidden;
+        /* Hide overflow for pseudo-element */
+      }
+
+      .cell:not([style*="background-color: #fff"])::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.4) 0%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        /* Radial gradient for fading effect */
+      }
+
+      .piece {
+        width: var(--piece-size);
+        height: var(--piece-size);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.6),
+          inset 0 -2px 4px rgba(0, 0, 0, 0.4), 0 4px 8px rgba(0, 0, 0, 0.3);
+        position: relative;
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.3),
+          rgba(0, 0, 0, 0.2)
+        );
+        z-index: 1;
+        /* Ensure the piece appears above the cell background */
+      }
+
+      .player1 {
+        background-color: #cc0000;
+        background: linear-gradient(145deg, #b20000, #cc0000);
+      }
+
+      .player2 {
+        background-color: #0000cc;
+        background: linear-gradient(145deg, #0000b2, #0000cc);
+      }
+
+      .freely-movable {
+        box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.6),
+          inset 0 -2px 4px rgba(0, 0, 0, 0.4), 0 4px 8px rgba(0, 0, 0, 0.3);
+        position: relative;
+      }
+
+      .freely-movable::before {
+        content: "";
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: inherit;
+        /* Inherit the color of the piece */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.6),
+          inset 0 -1px 2px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.2),
+          rgba(0, 0, 0, 0.1)
+        );
+      }
+
+      /* Turn display styles */
+      .player-turn {
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #333;
+        width: 250px;
+        background-image: url("imgs/info-bg.png");
+        background-repeat: no-repeat;
+        background-size: cover;
+        display: inline-block;
+        text-align: center;
+        font-family: thiscafefont;
+        /* Change the font */
+      }
+
+      .player-label {
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-right: 5px;
+      }
+
+      @font-face {
+        font-family: thiscafefont;
+        src: url(fonts/thiscafe.otf);
+      }
+
+      .turn-indicator {
+        font-style: italic;
+      }
+
+      /* Player information styles */
+      .player-info {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        margin-top: 20px;
+      }
+
+      .avatar {
+        margin-left: 30px;
+        width: 82px;
+        height: 85px;
+        background-image: url("imgs/player-avatar.png");
+      }
+
+      .ai-avatar {
+        margin-left: 0px;
+        width: 82px;
+        height: 85px;
+        background-image: url("imgs/ai-avatar.png");
+      }
+
+      .player-card {
+        padding: 15px;
+        width: 120px;
+        height: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: rgb(33, 12, 4);
+        background-size: cover;
+        transition: transform 0.3s ease;
+        margin: 0 10px;
+        text-align: center;
+        color: white;
+        font-family: thiscafefont;
+      }
+
+      .gameover-btns {
+        position: absolute;
+        display: flex;
+        flex-direction: row;
+        padding-inline: 0;
+        justify-content: center;
+        left: 50%;
+        top: 60%;
+        transform: translate(-50%, 0);
+      }
+
+      .menu {
+        display: block;
+        width: 57px;
+        height: 56px;
+        margin: 0 auto;
+        background-image: url("imgs/menu-btn.png");
+      }
+
+      .resume {
+        display: block;
+        width: 88px;
+        height: 56px;
+        margin-left: 5px;
+        margin-right: 5px;
+        background-image: url("imgs/ok-btn.png");
+      }
+
+      .paddingbtn {
+        display: block;
+        width: 88px;
+        height: 56px;
+        margin-left: 5px;
+        margin-right: 5px;
+      }
+
+      .button:hover {
+        opacity: 70%;
+      }
+
+      .restart {
+        display: block;
+        width: 57px;
+        height: 56px;
+        background-image: url("imgs/restart-btn.png");
+      }
+
+      .gameover-title {
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%, 0);
+        top: 1%;
+        font-family: thiscafefont;
+        color: whitesmoke;
+      }
+
+      #instruction {
+        display: none;
+        line-height: 30px;
+        margin: auto;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        height: 90vh;
+        margin: 5px;
+      }
+
+      /* .instruction{
+  top:260px;
+} */
+      .optiontitle {
+        position: absolute;
+        font-family: thiscafefont;
+        color: white;
+        margin-top: 40px;
+        left: 50%;
+        transform: translate(-50%, -25%);
+        z-index: 4;
+      }
+
+      .bluebg-option {
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%, 0);
+        width: 481px;
+        height: 140px;
+        margin: 0 auto;
+        margin-top: 10px;
+        left: 50%;
+        transform: translate(-50%, 0);
+        background-image: url("imgs/blue-bg-option.png");
+        z-index: 1;
+      }
+
+      .options-wood {
+        position: absolute;
+        width: 395px;
+        height: 658px;
+        left: 50%;
+        transform: translate(-50%, 0);
+        background-image: url("imgs/option-bg.png");
+        background-repeat: no-repeat;
+        z-index: 0;
+      }
+
+      .instruction-container {
+        position: absolute;
+        width: 340px;
+        height: 400px;
+        margin-top: 120px;
+        margin-left: 15px;
+        left: 50%;
+        transform: translate(-50%, 0);
+        padding: 20px;
+        z-index: 1;
+        overflow-y: scroll;
+        font-family: thiscafefont;
+        color: darkslategrey;
+      }
+
+      .helpresume {
+        position: relative;
+        left: 50%;
+        transform: translate(-50%, 0);
+        margin-top: 570px;
+      }
+
+      /* media responsive */
+      /* start media for sm screens (phones) */
+      @media screen and (max-width: 600px) {
+        .bluebg-option {
+          width: 90%;
+          background-size: contain;
+          background-repeat: no-repeat;
+        }
+
+        #topbtns {
+          margin-top: 20px;
+          margin-right: 20px;
+        }
+
+        #gameplay {
+          margin-top: 60px;
+          padding-bottom: 30px;
+          width: 90%;
+        }
+
+        #board {
+          grid-template-columns: repeat(8, 50px);
+        }
+
+        .cell {
+          width: 50px !important;
+        }
+
+        .piece {
+          width: 40px !important;
+          height: 40px !important;
+        }
+
+        .avatar {
+          margin-left: initial !important;
+          width: 50px !important;
+          height: 50px !important;
+          background-size: contain;
+          background-repeat: no-repeat;
+        }
+
+        .ai-avatar {
+          margin-left: initial !important;
+          width: 50px !important;
+          height: 50px !important;
+          background-size: contain;
+          background-repeat: no-repeat;
+        }
+
+        .player-info {
+          width: 90%;
+          gap: 10px;
+        }
+
+        .player-card {
+          width: 96px !important;
+        }
+
+        #turn-display {
+          margin-bottom: 0;
+        }
+
+        /* options */
+        .options-wood {
+          background-size: contain;
+          height: 90vh;
+        }
+      }
+
+      /* media from 0 to 460px */
+      @media screen and (max-width: 460px) {
+        /* quit button */
+        #pause {
+          height: 372px;
+          width: 90%;
+          display: block;
+          background-size: contain;
+        }
+
+        #pausetext {
+          padding-top: 0;
+        }
+
+        .gameover-btns {
+          top: 45%;
+        }
+
+        .gameover-title {
+          font-size: 20px;
+        }
+
+        /* instructions */
+        #instruction {
+          width: 90%;
+        }
+
+        #instruction .instruction-container {
+          margin-top: 66px;
+          width: 80%;
+        }
+
+        .options-wood {
+          margin-top: 50px;
+          width: 100%;
+          background-size: contain;
+        }
+
+        .bluebg-option {
+          width: 90%;
+          background-repeat: no-repeat;
+          background-size: contain;
+        }
+
+        .helpresume {
+          margin-top: 450px;
+          z-index: 100;
+        }
+
+        .optiontitle {
+          font-size: 20px;
+          margin-top: 33px;
+        }
+
+        /* ens instrcution */
+
+        #board {
+          grid-template-columns: repeat(8, 40px);
+          grid-template-rows: repeat(8, 50px);
+        }
+
+        #turn-display {
+          margin-top: 0 !important;
+        }
+
+        .cell {
+          width: 40px !important;
+          height: 50px !important;
+        }
+
+        .piece {
+          width: 30px !important;
+          height: 30px !important;
+        }
+
+        .player-info {
+          gap: initial !important;
+          width: 90% !important;
+        }
+
+        .player-card {
+          padding: 10px !important;
+        }
+
+        .avatar {
+          width: 40px !important;
+          height: 40px !important;
+        }
+
+        .ai-avatar {
+          width: 40px !important;
+          height: 40px !important;
+          background-size: contain;
+          background-repeat: no-repeat;
+        }
+
+        #topbtns {
+          margin-right: 50px;
+        }
+      }
+
+      /* stop from 0 to 355px screen */
+      @media screen and (max-width: 355px) {
+        #gameplay {
+          width: 90% !important;
+        }
+
+        #board {
+          grid-template-columns: repeat(8, 33px);
+          grid-template-rows: repeat(8, 40px);
+        }
+
+        .cell {
+          width: 33px !important;
+          height: 40px !important;
+        }
+
+        .player-card {
+          margin: 0 5px !important;
+        }
+
+        .player-count {
+          font-size: 13px !important;
+        }
+
+        #topbtns {
+          width: 90%;
+          margin-top: 40px;
+          margin-right: 100px;
+        }
+
+        #pausebtn {
+          background-size: contain;
+          background-repeat: no-repeat;
+        }
+      }
+
+      /* stop xsml screen */
+      @media screen and (max-width: 300px) {
+        #gameplay {
+          width: 90% !important;
+        }
+
+        #board {
+          grid-template-columns: repeat(8, 28px);
+          grid-template-rows: repeat(8, 40px);
+        }
+
+        .cell {
+          width: 28px !important;
+          height: 40px !important;
+        }
+
+        #pausebtn {
+          margin-right: 60px !important;
+        }
+
+        .player-card {
+          margin: 0 5px !important;
+        }
+
+        .player-count {
+          font-size: 13px !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="gameplay">
+      <!-- Turn display -->
+      <div id="turn-display" class="player-turn">
+        <span class="player-label">Player 1</span>
+        <span class="turn-indicator">Turn</span>
+      </div>
+      <div id="topbtns">
+        <div id="instructionbtn" class="instructionbtnclss playButton">
+          <span class="pausebtntext playButton">HELP</span>
+        </div>
+        <div id="pausebtn" class="pause playButton">
+          <span class="pausebtntext">QUIT</span>
+        </div>
+      </div>
+
+      <!-- Game board -->
+      <div id="board"></div>
+
+      <!-- Player information -->
+      <div class="player-info">
+        <div id="p1avatar"></div>
+        <div class="player-card" id="player1-card">
+          <div class="player-count" id="player1-count">Player 1: 12 pieces</div>
+        </div>
+        <div id="p2avatar"></div>
+        <div class="player-card" id="player2-card">
+          <div class="player-count" id="player2-count">Player 2: 12 pieces</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="pause">
+      <h1 class="gameover-title">PAUSED</h1>
+      <span id="pausetext">MAIN MENU OR RESTART?</span>
+      <ul class="gameover-btns">
+        <a href="javascript:void(0)" class="button menu playButtonOptions"></a>
+        <a
+          href="javascript:void(0)"
+          class="button resume playButtonOptions"
+        ></a>
+        <a
+          href="javascript:void(0)"
+          class="button restart playButtonOptions"
+        ></a>
+      </ul>
+    </div>
+    <div id="instruction">
+      <h1 class="optiontitle">INSTRUCTIONS</h1>
+      <div class="bluebg-option"></div>
+      <div class="options-wood"></div>
+      <div class="instruction-container">
+        <span
+          >The objective of the game is to capture all of the opponent's pieces
+          or to have 3 kings (the first player to accomplish either of these
+          wins).</span
+        >
+        <span style="display: inline-block; margin-top: 20px"
+          >Pieces move one square in any direction. If a piece moves to a square
+          that is occupied by an opponent's piece, the opponent's piece is
+          captured.</span
+        >
+        <span style="display: inline-block; margin-top: 20px"
+          >Some squares are colored. These squares are teleports, and a piece
+          that moves to a teleport cell will be teleported to the other square
+          on the board of the same color (unless it is occupied by a piece of
+          the same player). If a piece is already on a colored square, it can
+          teleport if desired.</span
+        >
+        <span style="display: inline-block; margin-top: 20px"
+          >A piece that reaches the opposite side of the board becomes a king
+          and can move in any direction any number of spaces, as long as it does
+          not "jump" over other pieces.</span
+        >
+      </div>
+      <a
+        href="javascript:void(0)"
+        class="button helpresume resume playButtonOptions"
+      ></a>
+    </div>
+    <div id="game-over">
+      <h1 class="gameover-title">GAME OVER</h1>
+      <span id="winner"></span>
+      <ul class="gameover-btns">
+        <a href="javascript:void(0)" class="button menu playButton"></a>
+        <a href="javascript:void(0)" class="button paddingbtn"></a>
+        <a
+          href="javascript:void(0)"
+          class="button restart playButtonOptions"
+        ></a>
+      </ul>
+    </div>
+    <!-- audio1 for page game -->
+    <audio id="myAudio1">
+      <source src="sound4.wav" type="audio/mpeg" />
+      Your browser does not support the audio element.
+    </audio>
+    <!-- audio2 for page game -->
+    <audio id="myAudio2">
+      <source src="sound5.wav" type="audio/mpeg" />
+      Your browser does not support the audio element.
+    </audio>
+    <!-- audio3 for page game start -moves of player-->
+    <audio id="myAudio3">
+      <source src="sound6.wav" type="audio/mpeg" />
+      Your browser does not support the audio element.
+    </audio>
+    <!-- audio3 for page game Game over-->
+    <audio id="myAudio4" controls autoplay hidden loop>
+      <source src="gameOver.mp3" type="audio/mp3" />
+      Your browser does not support the audio element.
+    </audio>
+
+    <!-- Scripts -->
+    <script type="text/javascript" src="jquery.3.7.1.min.js"></script>
+    <script src="init.js"></script>
+    <script>
+      // Set the CSS variables for the board size
+      document.documentElement.style.setProperty("--board-rows", window.rows);
+      document.documentElement.style.setProperty("--board-cols", window.cols);
+    </script>
+    <script src="aiplayer.js"></script>
+    <script src="game.js"></script>
+  </body>
+</html>

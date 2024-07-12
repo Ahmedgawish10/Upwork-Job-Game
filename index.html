@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Teleport Kings</title>
+  <link rel="stylesheet" href="menu.css" type="text/css" media="screen">
+  <script type="text/javascript" src="jquery.3.7.1.min.js"></script>
+</head>
+<body>
+  <div class="wrapper">
+    <div id="menu">
+      <div id="progress">
+        <div id="percent">Downloading: <span id="p"></span></div>
+        <progress id="progress-bar" value="0"></progress>
+      </div>
+      <div id="main">
+        <div class = "wood"></div>
+        <h1 class = "gamename">Teleport Kings</h1>
+        <ul>
+          <li class = "bluebg"></li>
+          <li><a href="javascript:void(0)" class="button play playButton">START GAME</a></li>
+          <li><a href="javascript:void(0)" class="button options playButton">OPTIONS</a></li>
+          <li><a href="javascript:void(0)" class="button instruction playButton">INSTRUCTIONS</a></li>
+        </ul>
+      </div>
+      <div id="options">
+        <h1 class = "optiontitle">OPTIONS</h1>
+        <div class="bluebg-option">
+        </div>
+        <div class="options-wood">
+        </div>
+        <div class="container">
+          <div class="form-group">
+              <label for="player1">Player 1:</label>
+              <select id="player1" class="playButtonOptions">
+                  <option value="human" style="font-family: thiscafefont">Human</option>
+                  <option value="ai">AI</option>
+              </select>
+          </div>
+          <div class="form-group">
+              <label for="player2">Player 2:  </label>
+              <select id="player2" class="playButtonOptions">
+                <option value="ai">AI</option>
+                <option value="human">Human</option>
+              </select>
+          </div>
+          <div class="form-group">
+              <label for="level" style="margin-left: 40px;">Level:</label>
+              <select id="level" class="playButtonOptions">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+              </select>
+          </div>
+        </div>
+        <a href="javascript:void(0)" class="button back playButton">OK</a>
+      </div>
+      <div id="instruction">
+        <h1 class = "optiontitle">INSTRUCTIONS</h1>
+        <div class="bluebg-option">
+        </div>
+        <div class="options-wood">
+        </div>
+        <div class="instruction-container">
+         <span>The objective of the game is to capture all of the opponent's pieces or to have 3 kings (the first player to accomplish either of these wins).</span>
+         <span style="display: inline-block; margin-top: 20px;">Pieces move one square in any direction. If a piece moves to a square that is occupied by an opponent's piece, the opponent's piece is captured.</span>
+         <span style="display: inline-block; margin-top: 20px;">Some squares are colored. These squares are teleports, and a piece that moves to a teleport cell will be teleported to the other square on the board of the same color (unless it is occupied by a piece of the same player). If a piece is already on a colored square, it can teleport if desired.</span>
+         <span style="display: inline-block; margin-top: 20px;">A piece that reaches the opposite side of the board becomes a king and can move in any direction any number of spaces, as long as it does not "jump" over other pieces.</span>
+        </div>
+        <a href="javascript:void(0)" class="button back playButton">OK</a>
+      </div>
+    </div>
+        <!--Play Sound bacground -->
+        <div class="sound-background-"> 
+          <audio id="myAudio4" controls autoplay hidden loop>
+            <source src="startSound.wav" type="audio/mp3">
+            Your browser does not support the audio element.
+          </audio>
+        
+        </div>
+            <!-- <button id="playButton">Play Sound</button> -->
+            <!-- audio1 for page index -->
+            <audio id="myAudio1">
+              <source src="sound2.wav" type="audio/mpeg">
+              Your browser does not support the audio element.
+            </audio>
+            <!-- audio2 for page index -->
+            <audio id="myAudio2">
+              <source src="sound3.wav" type="audio/mpeg">
+              Your browssser does not support the audio element.
+            </audio>
+            <!--stop-open sound  -->
+        
+            <button id="playButton"></button>
+          </div>
+         
+
+
+
+    <canvas id="canvas" width="1024" height="768">
+      <p>You're browser does not support the required functionality to play this game.</p>
+      <p>Please update to a modern browser such as <a href="www.google.com/chrome/‎">Google Chrome</a> to play.</p>
+    </canvas>
+  </div>
+  <script type="text/javascript" src="menu.js"></script>
+</body>
+</html>
